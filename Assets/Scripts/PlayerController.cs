@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Chicken")
+        if (other.GetComponent<ChickenController>())
         {
             Debug.Log("CHICKEN");
             IncreaseGameSpeed();
@@ -121,12 +121,12 @@ public class PlayerController : MonoBehaviour
             pauseMenuController.OnGameOver();
 
         }
-        else if (other.tag == "Milk")
+        else if (other.GetComponent<MilkController>())
         {
             Shrink();
             scoreController.DecreaseScore(50);
         }
-        else if (other.tag == "Snail")
+        else if (other.GetComponent<SnailController>())
         {
             currentGameSpeed = Time.fixedDeltaTime;
             Time.fixedDeltaTime = initialGameSpeed;
@@ -134,7 +134,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("SLOW down Game Speed : " + initialGameSpeed);
             Invoke("RestoreGameSpeed", 5f);
         }
-        else if (other.tag == "Star")
+        else if (other.GetComponent<StarController>())
         {
             scoreController.ScoreMultiplier();
         }

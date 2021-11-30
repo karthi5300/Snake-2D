@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuController : MonoBehaviour
+public class MainMenuController : MonoBehaviour
 {
 
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject optionsMenu;
+    [SerializeField] private GameObject resetMessage;
 
     public AudioClip lobbyMusic;
     public AudioClip buttonSound;
@@ -36,10 +37,11 @@ public class MenuController : MonoBehaviour
         Application.Quit();
     }
 
-    public void OnBackInMenu()
+    public void OnBackInOptionsMenu()
     {
         optionsMenu.SetActive(false);
         mainMenu.SetActive(true);
+        resetMessage.SetActive(false);
         ButtonClickSound();
     }
 
@@ -58,5 +60,10 @@ public class MenuController : MonoBehaviour
         SoundManager.Instance.PlayMusic(gameMusic);
     }
 
+    public void ResetAllData()
+    {
+        PlayerPrefs.DeleteAll();
+        resetMessage.SetActive(true);
+    }
 
 }

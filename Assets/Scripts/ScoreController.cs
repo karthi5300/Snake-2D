@@ -22,7 +22,6 @@ public class ScoreController : MonoBehaviour
         scoreText = GetComponent<TextMeshProUGUI>();
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         RefreshUI();
@@ -31,9 +30,11 @@ public class ScoreController : MonoBehaviour
     public void IncreaseScore(int value)
     {
         score += value * scoreMultiplier;
+        highScore = PlayerPrefs.GetInt("HS");
         if (score > highScore)
         {
             highScore = score;
+            PlayerPrefs.SetInt("HS", highScore);
             animator.SetTrigger("isHigh");
         }
         RefreshUI();
@@ -50,9 +51,9 @@ public class ScoreController : MonoBehaviour
     public void RefreshUI()
     {
         scoreText.text = "Score: " + score;
-        highScoreText.text = "Highest Score: " + highScore;
         finalScoreText.text = "Score: " + score; ;
-        finalHighScoreText.text = "Highest Score: " + highScore;
+        highScoreText.text = "Highest Score: " + PlayerPrefs.GetInt("HS"); ;
+        finalHighScoreText.text = "Highest Score: " + PlayerPrefs.GetInt("HS"); ;
     }
 
     public void ResetScore()
