@@ -8,6 +8,11 @@ public class ScoreController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI highScoreText;
     [SerializeField] private Animator animator;
 
+    [SerializeField] private TextMeshProUGUI finalScoreText;
+    [SerializeField] private TextMeshProUGUI finalHighScoreText;
+
+    private int scoreMultiplier = 1;
+
 
     private int score = 0;
     private int highScore = 0;
@@ -25,7 +30,7 @@ public class ScoreController : MonoBehaviour
 
     public void IncreaseScore(int value)
     {
-        score += value;
+        score += value * scoreMultiplier;
         if (score > highScore)
         {
             highScore = score;
@@ -36,18 +41,34 @@ public class ScoreController : MonoBehaviour
 
     public void DecreaseScore(int value)
     {
-        score -= value;
+        if (score > 0)
+            score -= value;
+
+        RefreshUI();
     }
 
     public void RefreshUI()
     {
         scoreText.text = "Score: " + score;
         highScoreText.text = "Highest Score: " + highScore;
+        finalScoreText.text = "Score: " + score; ;
+        finalHighScoreText.text = "Highest Score: " + highScore;
     }
 
     public void ResetScore()
     {
         score = 0;
         scoreText.text = "Score: " + score;
+    }
+
+    public void ScoreMultiplier()
+    {
+        scoreMultiplier = 2;
+        Invoke("ResetScoreMultiplier", 10f);
+    }
+
+    public void ResetScoreMultiplier()
+    {
+        scoreMultiplier = 1;
     }
 }

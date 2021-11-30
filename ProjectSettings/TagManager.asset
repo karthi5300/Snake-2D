@@ -7,6 +7,8 @@ TagManager:
   - Obstacle
   - Milk
   - Chicken
+  - Snail
+  - Star
   layers:
   - Default
   - TransparentFX

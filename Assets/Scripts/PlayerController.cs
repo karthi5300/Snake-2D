@@ -1,21 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
 
     [SerializeField] private Transform segmentPrefab;
-    [SerializeField] private int initialSize = 3;
+    [SerializeField] private int initialSnakeSize = 3;
     [SerializeField] private ScoreController scoreController;
+    [SerializeField] private PauseMenuController pauseMenuController;
     [SerializeField] private float initialGameSpeed = 0.1f;
+
     private Vector2 direction = Vector2.right;
     private List<Transform> _segments;
 
     private float gameSpeedChanger = 0.0025f;
+    private float currentGameSpeed;
 
+    private bool isPaused = false;
 
     void Awake()
     {
+        currentGameSpeed = initialGameSpeed;
         _segments = new List<Transform>();
     }
 
@@ -47,6 +53,20 @@ public class PlayerController : MonoBehaviour
             direction = Vector2.right;
             //transform.Rotate(0, 0, -90);
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!isPaused)
+            {
+                pauseMenuController.OnPauseButtonClick();
+                isPaused = true;
+            }
+            else
+            {
+                pauseMenuController.OnResumeButtonClick();
+                isPaused = false;
+            }
+        }
     }
 
     void FixedUpdate()
@@ -75,28 +95,48 @@ public class PlayerController : MonoBehaviour
 
     void Shrink()
     {
-        Transform segment = _segments[_segments.Count - 1].transform;   //attaching the newly created segment to the last index of list
-        _segments.Remove(segment);
-        Destroy(segment.gameObject);
+        int currentSnakeSize = _segments.Count;
+
+        if (currentSnakeSize > initialSnakeSize)
+        {
+            Transform segment = _segments[_segments.Count - 1].transform;   //attaching the newly created segment to the last index of list
+            _segments.Remove(segment);
+            Destroy(segment.gameObject);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Chicken")
         {
+            Debug.Log("CHICKEN");
             IncreaseGameSpeed();
             Grow();
             scoreController.IncreaseScore(50);
         }
         else if (other.tag == "Obstacle")
         {
-            ResetState();
-            scoreController.ResetScore();
+            Debug.Log("Player DIED");
+            scoreController.RefreshUI();
+            pauseMenuController.OnGameOver();
+
         }
         else if (other.tag == "Milk")
         {
             Shrink();
             scoreController.DecreaseScore(50);
+        }
+        else if (other.tag == "Snail")
+        {
+            currentGameSpeed = Time.fixedDeltaTime;
+            Time.fixedDeltaTime = initialGameSpeed;
+            Debug.Log("---Time Slow Down----");
+            Debug.Log("SLOW down Game Speed : " + initialGameSpeed);
+            Invoke("RestoreGameSpeed", 5f);
+        }
+        else if (other.tag == "Star")
+        {
+            scoreController.ScoreMultiplier();
         }
     }
 
@@ -117,7 +157,7 @@ public class PlayerController : MonoBehaviour
         _segments.Add(transform);   //adding snake head into segments
 
         //this loop is to set snake's initial size
-        for (int i = 1; i < initialSize; i++)
+        for (int i = 1; i < initialSnakeSize; i++)
         {
             _segments.Add(Instantiate(segmentPrefab));
         }
@@ -128,8 +168,16 @@ public class PlayerController : MonoBehaviour
 
     public void IncreaseGameSpeed()
     {
-        float currentGameSpeed = Time.fixedDeltaTime;
-        float newGameSpeed = currentGameSpeed - gameSpeedChanger;
+        Debug.Log("---Game Speed Increased----");
+        float newGameSpeed = Time.fixedDeltaTime - gameSpeedChanger;
+        Debug.Log("NEW Game Speed : " + newGameSpeed);
         Time.fixedDeltaTime = newGameSpeed;
+    }
+
+    public void RestoreGameSpeed()
+    {
+
+        Debug.Log("RESTORED Game Speed : " + currentGameSpeed);
+        Time.fixedDeltaTime = currentGameSpeed;
     }
 }

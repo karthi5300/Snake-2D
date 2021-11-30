@@ -5,8 +5,10 @@ public class PauseMenuController : MonoBehaviour
 {
 
     [SerializeField] GameObject pauseMenu;
+    [SerializeField] GameObject gameOverMenu;
 
     public AudioClip buttonSound;
+    public AudioClip deathSound;
 
     void Start()
     {
@@ -20,21 +22,43 @@ public class PauseMenuController : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    public void OnBackInPauseMenu()
+    public void OnResumeButtonClick()
     {
         ButtonClickSound();
         pauseMenu.SetActive(false);
         Time.timeScale = 1;
     }
 
-    public void OnQuitInPauseMenu()
+    public void OnLobbyButtonClick()
     {
         ButtonClickSound();
         SceneManager.LoadScene(0);
     }
 
+    public void OnGameOver()
+    {
+        DeathSound();
+        gameOverMenu.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+
+    public void OnReplayButtonClick()
+    {
+        ButtonClickSound();
+        gameObject.SetActive(false);
+        SceneManager.LoadScene(1);
+    }
+
+
     public void ButtonClickSound()
     {
         SoundManager.Instance.Play(buttonSound);
     }
+
+    public void DeathSound()
+    {
+        SoundManager.Instance.Play(deathSound);
+    }
+
 }
