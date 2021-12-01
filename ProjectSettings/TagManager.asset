@@ -4,16 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Obstacle
-  - Milk
-  - Chicken
-  - Snail
-  - Star
+  - Boundary
+  - SnakeBody
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Wall

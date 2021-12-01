@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,12 +9,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ScoreController scoreController;
     [SerializeField] private PauseMenuController pauseMenuController;
     [SerializeField] private float initialGameSpeed = 0.1f;
+    [SerializeField] private GameObject WallLeft, WallRight, WallUp, WallDown;
 
     private Vector2 direction = Vector2.right;
     private List<Transform> _segments;
 
     private float gameSpeedChanger = 0.0025f;
     private float currentGameSpeed;
+    private bool isShieldActive = false;
 
     private bool isPaused = false;
 
@@ -114,11 +115,18 @@ public class PlayerController : MonoBehaviour
             Grow();
             scoreController.IncreaseScore(50);
         }
-        else if (other.tag == "Obstacle")
+        else if (other.tag == "SnakeBody")
         {
-            Debug.Log("Player DIED");
-            scoreController.RefreshUI();
-            pauseMenuController.OnGameOver();
+            if (isShieldActive)
+            {
+                //do nothing
+            }
+            else
+            {
+                Debug.Log("Player DIED");
+                scoreController.RefreshUI();
+                pauseMenuController.OnGameOver();
+            }
 
         }
         else if (other.GetComponent<MilkController>())
@@ -138,6 +146,22 @@ public class PlayerController : MonoBehaviour
         {
             scoreController.ScoreMultiplier();
         }
+        else if (other.tag == "Boundary")
+        {
+            BoundaryController();
+        }
+        else if (other.GetComponent<ShieldController>())
+        {
+            Debug.Log("SHIELD on");
+            isShieldActive = true;
+            Invoke("RevokeShield", 5f);
+        }
+    }
+
+    void RevokeShield()
+    {
+        Debug.Log("SHIELD off");
+        isShieldActive = false;
     }
 
     void ResetState()
@@ -179,5 +203,37 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("RESTORED Game Speed : " + currentGameSpeed);
         Time.fixedDeltaTime = currentGameSpeed;
+    }
+
+    public void BoundaryController()
+    {
+        if (direction == Vector2.right)
+        {
+            transform.position = new Vector2(
+                Mathf.Round(WallLeft.transform.position.x) + direction.x,
+                Mathf.Round(transform.position.y) + direction.y
+         );
+        }
+        else if (direction == Vector2.left)
+        {
+            transform.position = new Vector2(
+                Mathf.Round(WallRight.transform.position.x) + direction.x,
+                Mathf.Round(transform.position.y) + direction.y
+            );
+        }
+        else if (direction == Vector2.up)
+        {
+            transform.position = new Vector2(
+                Mathf.Round(transform.position.x) + direction.x,
+                Mathf.Round(WallDown.transform.position.y) + direction.y
+            );
+        }
+        else if (direction == Vector2.down)
+        {
+            transform.position = new Vector2(
+                Mathf.Round(transform.position.x) + direction.x,
+                Mathf.Round(WallUp.transform.position.y) + direction.y
+            );
+        }
     }
 }

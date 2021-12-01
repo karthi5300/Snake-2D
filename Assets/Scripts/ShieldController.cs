@@ -1,18 +1,17 @@
 using UnityEngine;
 
-public class MilkController : MonoBehaviour
+public class ShieldController : MonoBehaviour
 {
-
-    [SerializeField] AudioClip drinkSound;
+    [SerializeField] AudioClip shieldActivatedSound;
 
     public BoxCollider2D gridArea;
 
     void Start()
     {
-        Invoke("RandomizeMilk", 5f);
+        Invoke("RandomizeShield", 5f);
     }
 
-    private void RandomizeMilk()
+    private void RandomizeShield()
     {
         //get the area size
         Bounds bounds = gridArea.bounds;
@@ -24,17 +23,14 @@ public class MilkController : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.GetComponent<PlayerController>())
         {
-            SoundManager.Instance.Play(drinkSound);
+            SoundManager.Instance.Play(shieldActivatedSound);
             gameObject.SetActive(false);
-            Invoke("RandomizeMilk", 5f);
+            Invoke("RandomizeShield", 5f);
         }
     }
-
-
 
 }
