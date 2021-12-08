@@ -3,12 +3,14 @@ using UnityEngine;
 public class SnailController : MonoBehaviour
 {
     [SerializeField] AudioClip timeSlowSound;
+    [SerializeField] private SnailBarController snailBarController;
+    [SerializeField] private int snailTimer = 7;
 
     public BoxCollider2D gridArea;
 
     void Start()
     {
-        Invoke("RandomizeSnail", 5f);
+        Invoke("RandomizeSnail", snailTimer);
     }
 
     private void RandomizeSnail()
@@ -27,10 +29,17 @@ public class SnailController : MonoBehaviour
     {
         if (other.GetComponent<PlayerController>())
         {
+            EnableSnailBar();
             SoundManager.Instance.Play(timeSlowSound);
             gameObject.SetActive(false);
-            Invoke("RandomizeSnail", 5f);
+            Invoke("RandomizeSnail", snailTimer);
         }
+    }
+
+    public void EnableSnailBar()
+    {
+        snailBarController.EnableSnailBar();
+        snailBarController.SetSnailBarTimer(snailTimer);
     }
 
 }

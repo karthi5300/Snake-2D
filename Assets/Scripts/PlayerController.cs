@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -10,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PauseMenuController pauseMenuController;
     [SerializeField] private float initialGameSpeed = 0.1f;
     [SerializeField] private GameObject WallLeft, WallRight, WallUp, WallDown;
+
 
     private Vector2 direction = Vector2.right;
     private List<Transform> _segments;
@@ -33,27 +35,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            direction = Vector2.up;
-            //transform.Rotate(0, 0, 90);
-        }
-
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            direction = Vector2.down;
-            //transform.Rotate(0, 0, -90);
-        }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            direction = Vector2.left;
-            //transform.Rotate(0, 0, 90);
-        }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            direction = Vector2.right;
-            //transform.Rotate(0, 0, -90);
-        }
+        PlayerMovement();
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -69,6 +51,37 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    void PlayerMovement()
+    {
+        if (direction == Vector2.right || direction == Vector2.left)
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                direction = Vector2.up;
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                direction = Vector2.down;
+                transform.rotation = Quaternion.Euler(Vector3.forward * -90);
+            }
+        }
+        else if (direction == Vector2.up || direction == Vector2.down)
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                direction = Vector2.left;
+                transform.rotation = Quaternion.Euler(Vector3.forward * 180);
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                direction = Vector2.right;
+                transform.rotation = Quaternion.Euler(Vector3.forward * 90);
+            }
+        }
+    }
+
+
 
     void FixedUpdate()
     {
@@ -140,7 +153,7 @@ public class PlayerController : MonoBehaviour
             Time.fixedDeltaTime = initialGameSpeed;
             Debug.Log("---Time Slow Down----");
             Debug.Log("SLOW down Game Speed : " + initialGameSpeed);
-            Invoke("RestoreGameSpeed", 5f);
+            Invoke("RestoreGameSpeed", 7f);
         }
         else if (other.GetComponent<StarController>())
         {
@@ -154,9 +167,25 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("SHIELD on");
             isShieldActive = true;
-            Invoke("RevokeShield", 5f);
+            //ShieldPowerUpEffect();
+            Invoke("RevokeShield", 7f);
         }
     }
+
+    // IEnumerator ShieldPowerUpEffect()
+    // {
+    //     int currentSnakeSize = _segments.Count;
+    //     for (int i = 0; i < currentSnakeSize; i++)
+    //     {
+    //         _segments[i].GetComponent<BoxCollider2D>().enabled = false;
+    //         yield return new WaitForSeconds(10f);
+    //     }
+
+    //     for (int i = 0; i < currentSnakeSize; i++)
+    //     {
+    //         _segments[i].GetComponent<BoxCollider2D>().enabled = true;
+    //     }
+    // }
 
     void RevokeShield()
     {

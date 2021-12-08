@@ -3,12 +3,14 @@ using UnityEngine;
 public class ShieldController : MonoBehaviour
 {
     [SerializeField] AudioClip shieldActivatedSound;
+    [SerializeField] private ShieldBarController shieldBarController;
+    [SerializeField] private int shieldTimer = 7;
 
     public BoxCollider2D gridArea;
 
     void Start()
     {
-        Invoke("RandomizeShield", 5f);
+        Invoke("RandomizeShield", shieldTimer);
     }
 
     private void RandomizeShield()
@@ -27,10 +29,17 @@ public class ShieldController : MonoBehaviour
     {
         if (other.GetComponent<PlayerController>())
         {
+            EnableShieldBar();
             SoundManager.Instance.Play(shieldActivatedSound);
             gameObject.SetActive(false);
-            Invoke("RandomizeShield", 5f);
+            Invoke("RandomizeShield", shieldTimer);
         }
+    }
+
+    public void EnableShieldBar()
+    {
+        shieldBarController.EnableSnailBar();
+        shieldBarController.SetSnailBarTimer(shieldTimer);
     }
 
 }

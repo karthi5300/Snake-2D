@@ -4,6 +4,7 @@ public class ChickenController : MonoBehaviour
 {
 
     [SerializeField] AudioClip bloodSound;
+    //[SerializeField] Level level;
 
     public BoxCollider2D gridArea;
 
